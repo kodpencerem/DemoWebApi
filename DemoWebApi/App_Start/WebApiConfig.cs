@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
-using System.Web.Http;
+﻿using System.Web.Http;
 
 namespace DemoWebApi
 {
@@ -18,8 +17,14 @@ namespace DemoWebApi
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            config.Formatters.JsonFormatter.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
-            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("text/html"));
+
+            //config.Formatters.Remove(config.Formatters.XmlFormatter);
+
+            //config.Formatters.Remove(config.Formatters.JsonFormatter);
+
+            //config.Formatters.JsonFormatter.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            //config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }
