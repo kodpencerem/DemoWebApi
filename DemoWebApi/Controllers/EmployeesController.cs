@@ -20,7 +20,7 @@ namespace DemoWebApi.Controllers
         {
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
-                var entity = entities.Employees.FirstOrDefault(e=>e.ID == id);
+                var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
 
                 if (entity != null)
                 {
@@ -28,7 +28,7 @@ namespace DemoWebApi.Controllers
                 }
                 else
                 {
-                    return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id" +  id.ToString() + "not found");
+                    return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id" + id.ToString() + "not found");
                 }
             }
         }
@@ -45,6 +45,33 @@ namespace DemoWebApi.Controllers
                     var message = Request.CreateResponse(System.Net.HttpStatusCode.Created, employee);
                     message.Headers.Location = new System.Uri(Request.RequestUri + employee.ID.ToString());
                     return message;
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+                return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, ex);
+            }
+
+        }
+
+        public HttpResponseMessage Delete(int id)
+        {
+            try
+            {
+                using (EmployeeDBEntities entities = new EmployeeDBEntities())
+                {
+                    var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
+                    if (entity == null)
+                    {
+                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id = " + id.ToString() + "not found to delete");
+                    }
+                    else
+                    {
+                        entities.Employees.Remove(entity);
+                        entities.SaveChanges();
+                        return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                    }
                 }
             }
             catch (System.Exception ex)
