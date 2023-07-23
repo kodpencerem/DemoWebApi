@@ -81,5 +81,36 @@ namespace DemoWebApi.Controllers
             }
 
         }
+
+        public HttpResponseMessage Put(int id, [FromBody] Employee employee)
+        {
+            try
+            {
+                using (EmployeeDBEntities entities = new EmployeeDBEntities())
+                {
+                    var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
+
+                    if (entity == null)
+                    {
+                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id = " + id.ToString() + "not found to update");
+                    }
+                    else
+                    {
+                        entity.FirstName = employee.FirstName;
+                        entity.LastName = employee.LastName;
+                        entity.Salary = employee.Salary;
+                        entity.Gender = employee.Gender;
+                        entities.SaveChanges();
+                        return Request.CreateResponse(System.Net.HttpStatusCode.OK, entity);
+                    }
+
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+                return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, ex);
+            }
+        }
     }
 }
