@@ -8,11 +8,22 @@ namespace DemoWebApi.Controllers
 {
     public class EmployeesController : ApiController
     {
-        public IEnumerable<Employee> GetEmployees()
+        public HttpResponseMessage GetEmployees(string gender = "All")
         {
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
-                return entities.Employees.ToList();
+                switch (gender.ToLower())
+                {
+                    case "all":
+                        return Request.CreateResponse(System.Net.HttpStatusCode.OK, entities.Employees.ToList());
+                    case "male":
+                        return Request.CreateResponse(System.Net.HttpStatusCode.OK, entities.Employees.Where(e=>e.Gender.ToLower()=="male").ToList());
+                    case "female":
+                        return Request.CreateResponse(System.Net.HttpStatusCode.OK, entities.Employees.Where(e => e.Gender.ToLower() == "female").ToList());
+
+                    default:
+                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.BadRequest, " Value for gender must be All, Male or Female. " + gender + " is invalid value");
+                }
             }
         }
 
@@ -28,7 +39,7 @@ namespace DemoWebApi.Controllers
                 }
                 else
                 {
-                    return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id" + id.ToString() + "not found");
+                    return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, " Employee with Id " + id.ToString() + " not found");
                 }
             }
         }
@@ -64,7 +75,7 @@ namespace DemoWebApi.Controllers
                     var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
                     if (entity == null)
                     {
-                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id = " + id.ToString() + "not found to delete");
+                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, " Employee with Id = " + id.ToString() + " not found to delete");
                     }
                     else
                     {
@@ -92,7 +103,7 @@ namespace DemoWebApi.Controllers
 
                     if (entity == null)
                     {
-                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, "Employee with Id = " + id.ToString() + "not found to update");
+                        return Request.CreateErrorResponse(System.Net.HttpStatusCode.NotFound, " Employee with Id = " + id.ToString() + " not found to update");
                     }
                     else
                     {
